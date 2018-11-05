@@ -26,5 +26,15 @@ for player in players:
 columns = ['Player', 'Team', 'Salary']
 #created dataframe
 playersalaries = pd.DataFrame(salaries, columns=columns)
-playersalaries.to_csv('./2018_19_NBA_Salaries.csv')
-        
+playersalaries = playersalaries.sort_values('Player')
+salary = playersalaries['Salary']
+#changing format of the Salary column
+newsal = []
+for i in salary:
+    newsal.append(int(i[1:].replace(',','')))
+#update player salaries column 
+playersalaries['Salary']=newsal
+playersalaries = playersalaries.drop('Team', axis=1)
+#combining total player salaries for the year to remove buy out duplicates
+totalsalaries = pd.DataFrame(playersalaries.groupby('Player')['Salary'].sum(), columns=['Salary']).reset_index()
+totalsalaries.to_csv('./2018_19_NBA_Salaries.csv')
